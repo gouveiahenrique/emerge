@@ -1,0 +1,682 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Berkeley Mobile — ASDLC-512 Prototype Stylesheet
+   Design tokens extracted from berkeley-mobile-ios via CodeGraph / GitHub
+   ───────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Extracted from berkeley-mobile-ios ── */
+  --app-accent:        #003262;   /* Berkeley Blue — primary brand */
+  --app-gold:          #FDB515;   /* Cal Gold — secondary accent */
+  --color-bg:          #F2F2F7;   /* iOS secondarySystemBackground */
+  --color-surface:     #FFFFFF;   /* card/surface */
+  --color-label:       #000000;   /* primary text */
+  --color-muted:       #6C6C70;   /* secondary text */
+  --color-border:      rgba(60, 60, 67, 0.29);
+  --color-error:       #FF3B30;   /* iOS red */
+  --color-success:     #34C759;   /* iOS green */
+  --radius-base:       12px;
+  --radius-image:      10px;
+  --spacing-unit:      16px;
+  --font-family:       -apple-system, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+
+  /* ── iOS System ── */
+  --ios-blue:          #007AFF;
+  --ios-fill:          rgba(120, 120, 128, 0.2);
+  --ios-fill-thick:    rgba(120, 120, 128, 0.36);
+  --ios-separator:     var(--color-border);
+  --ios-bg-primary:    var(--color-bg);
+  --ios-bg-secondary:  var(--color-surface);
+  --ios-label:         var(--color-label);
+  --ios-label-secondary: var(--color-muted);
+
+  /* ── Card shadow (from CardView.swift: radius 5, opacity 0.25) ── */
+  --card-shadow:       0 5px 20px rgba(0, 0, 0, 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg:      #000000;
+    --color-surface: #1C1C1E;
+    --color-label:   #FFFFFF;
+    --color-muted:   rgba(235, 235, 245, 0.6);
+    --color-border:  rgba(84, 84, 88, 0.65);
+    --card-shadow:   0 5px 20px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button { background: none; border: none; cursor: pointer; font: inherit; color: inherit; }
+
+/* ─── Page Layout ────────────────────────────────────────────────────────── */
+body {
+  background: #1a1a2e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: var(--font-family);
+}
+
+/* ─── iPhone 15 Pro Frame (393×852) ──────────────────────────────────────── */
+.iphone-frame {
+  width: 393px;
+  height: 852px;
+  background: #000;
+  border-radius: 55px;
+  box-shadow:
+    0 0 0 2px #3a3a3c,
+    0 0 0 6px #1c1c1e,
+    0 40px 80px rgba(0, 0, 0, 0.6);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.dynamic-island {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 34px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 100;
+}
+
+.screen-area {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 55px;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+/* ─── Screen Panels ──────────────────────────────────────────────────────── */
+.screen {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 320ms cubic-bezier(0.42, 0, 0.15, 1),
+              opacity 320ms cubic-bezier(0.42, 0, 0.15, 1);
+  will-change: transform, opacity;
+}
+
+.screen.active {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.screen.exiting {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.screen.prev-active {
+  transform: translateX(-30%);
+  opacity: 0.6;
+}
+
+/* ─── Status Bar ─────────────────────────────────────────────────────────── */
+.status-bar {
+  height: 54px;
+  padding: 14px 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.status-bar .time {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  color: var(--color-label);
+}
+
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-label);
+}
+
+/* ─── Navigation Bar ─────────────────────────────────────────────────────── */
+.nav-bar {
+  height: 44px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  flex-shrink: 0;
+  border-bottom: 0.5px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.nav-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-label);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  letter-spacing: -0.4px;
+}
+
+.nav-large-title {
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--color-label);
+  padding: 0 16px 8px;
+  letter-spacing: 0.37px;
+}
+
+.nav-back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ios-blue);
+  font-size: 17px;
+  font-weight: 400;
+  padding: 4px 0;
+  z-index: 1;
+}
+
+.nav-back svg { flex-shrink: 0; }
+
+.nav-action-btn {
+  color: var(--ios-blue);
+  display: flex;
+  align-items: center;
+  z-index: 1;
+  padding: 4px;
+  border-radius: 8px;
+  transition: opacity 0.15s;
+}
+
+.nav-action-btn:active { opacity: 0.5; }
+
+/* ─── Scrollable Content ─────────────────────────────────────────────────── */
+.screen-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.screen-content::-webkit-scrollbar { display: none; }
+
+/* ─── Home Indicator ─────────────────────────────────────────────────────── */
+.home-indicator {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.home-indicator::after {
+  content: '';
+  display: block;
+  width: 134px;
+  height: 5px;
+  background: var(--color-label);
+  border-radius: 3px;
+  opacity: 0.2;
+}
+
+/* ─── Events List Screen ─────────────────────────────────────────────────── */
+.events-header {
+  padding: 8px 16px 16px;
+  position: relative;
+}
+
+.events-header::before {
+  content: '';
+  position: absolute;
+  top: -20px; right: -10px;
+  width: 280px; height: 140px;
+  background: linear-gradient(135deg, var(--app-accent) 0%, #0d5da0 60%, #1e7ac0 100%);
+  border-radius: 50%;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.events-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 20px 16px 8px;
+}
+
+/* All-day banner row (from AllDayEventBannerView) */
+.all-day-banner-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--ios-fill);
+  gap: 12px;
+  border-bottom: 0.5px solid var(--color-border);
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.all-day-banner-row:active { background: var(--ios-fill-thick); }
+
+.adb-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.adb-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: rgba(120, 120, 128, 0.35);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-label);
+  white-space: nowrap;
+  flex-shrink: 0;
+  height: 26px;
+}
+
+.adb-name {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-label);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.adb-chevron { color: var(--color-muted); flex-shrink: 0; }
+
+/* Standard event rows */
+.event-row-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border-bottom: 0.5px solid var(--color-border);
+  transition: background 0.15s;
+}
+
+.event-row-btn:active { background: var(--ios-fill); }
+
+.event-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 14px;
+}
+
+.event-row-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.er-bg-cs    { background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%); }
+.er-bg-bears { background: linear-gradient(135deg, #003262 0%, #FDB515 140%); }
+
+.event-row-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.er-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-label);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.er-date {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-muted);
+  margin-bottom: 2px;
+}
+
+.er-location {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.er-chevron { color: var(--color-border); flex-shrink: 0; }
+
+/* ─── Event Detail Header Card ───────────────────────────────────────────── */
+/* Mirrors BMDetailHeaderView: ZStack with image + regularMaterial overlay */
+.event-header-card {
+  position: relative;
+  margin: 20px 16px 0;
+  border-radius: var(--radius-base);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  flex-shrink: 0;
+}
+
+/* Background gradient (simulates BMCachedAsyncImageView campus photo) */
+.ehc-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.ehc-bg-career {
+  background: linear-gradient(160deg, #002145 0%, #003262 40%, #0d5294 75%, #1e6bb5 100%);
+}
+
+.ehc-bg-lecture {
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 40%, #0f3460 80%, #1a4a7a 100%);
+}
+
+/* regularMaterial overlay (frosted glass) */
+.ehc-overlay {
+  position: relative;
+  z-index: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(242, 242, 247, 0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .ehc-overlay {
+    background: rgba(28, 28, 30, 0.85);
+  }
+}
+
+/* Thumbnail image (130×130, cornerRadius 10, centered) */
+.ehc-thumb-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.ehc-thumb {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-image);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35);
+  letter-spacing: 1px;
+}
+
+.ehc-thumb-career {
+  background: linear-gradient(135deg, #003262 0%, #0d5294 100%);
+}
+
+.ehc-thumb-lecture {
+  background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+}
+
+/* Event name (BMFont.bold(20)) */
+.ehc-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-label);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+}
+
+/* Detail rows container */
+.ehc-rows {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Individual detail row (EventDetailRow: HStack with icon + text) */
+.ehc-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-label);
+}
+
+.ehc-row-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--color-muted);
+}
+
+.ehc-row-text {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-label);
+  line-height: 1.4;
+}
+
+.ehc-row-text-error {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-error);
+  line-height: 1.4;
+}
+
+/* ─── All Day Badge (the fix: capsule/pill from issue) ───────────────────── */
+/* Mirrors AllDayEventBannerView: Capsule with semi-transparent gray fill */
+.all-day-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  background: rgba(120, 120, 128, 0.2);
+  border: 0.5px solid rgba(120, 120, 128, 0.3);
+  border-radius: 100px; /* full capsule */
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-label);
+  white-space: nowrap;
+  height: 26px;
+  letter-spacing: -0.1px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .all-day-badge {
+    background: rgba(120, 120, 128, 0.3);
+    border-color: rgba(120, 120, 128, 0.5);
+  }
+}
+
+/* ─── Before/After Demo Toggle ───────────────────────────────────────────── */
+.demo-callout {
+  margin: 16px 16px 0;
+  padding: 12px 14px;
+  background: var(--color-surface);
+  border-radius: var(--radius-base);
+  box-shadow: var(--card-shadow);
+}
+
+.demo-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--app-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 10px;
+}
+
+.demo-seg {
+  display: flex;
+  background: var(--ios-fill);
+  border-radius: 9px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.seg-option {
+  flex: 1;
+  padding: 7px 8px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-label);
+  transition: background 0.2s, color 0.2s;
+  text-align: center;
+}
+
+.seg-option.seg-active {
+  background: var(--color-surface);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.seg-option-before.seg-active {
+  color: var(--color-error);
+}
+
+.seg-option-after.seg-active {
+  color: var(--app-accent);
+}
+
+/* ─── Info Callout ───────────────────────────────────────────────────────── */
+.info-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 16px 16px 0;
+  padding: 10px 12px;
+  background: rgba(0, 50, 98, 0.08);
+  border-radius: 10px;
+  border-left: 3px solid var(--app-accent);
+}
+
+@media (prefers-color-scheme: dark) {
+  .info-callout { background: rgba(0, 50, 98, 0.2); }
+}
+
+.info-callout-icon { color: var(--app-accent); flex-shrink: 0; margin-top: 1px; }
+
+.info-callout-text {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+/* ─── Description Card ───────────────────────────────────────────────────── */
+.desc-card {
+  margin: 16px 16px 0;
+  padding: 16px;
+  background: var(--color-surface);
+  border-radius: var(--radius-base);
+  box-shadow: var(--card-shadow);
+}
+
+.desc-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-label);
+  margin-bottom: 12px;
+}
+
+.desc-body {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--color-label);
+  line-height: 1.6;
+}
+
+/* ─── Action Buttons (BMActionButton) ────────────────────────────────────── */
+.action-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 16px 20px;
+}
+
+.action-btn-filled {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--app-accent);
+  color: white;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: -0.2px;
+  transition: opacity 0.15s;
+  box-shadow: 0 2px 8px rgba(0, 50, 98, 0.3);
+}
+
+.action-btn-filled:active { opacity: 0.75; }
+
+/* ─── Toast Notification ─────────────────────────────────────────────────── */
+.toast {
+  position: absolute;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background: rgba(50, 50, 55, 0.92);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 9px 16px;
+  border-radius: 100px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 200;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.toast.toast-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ─── Typography (iOS scale) ─────────────────────────────────────────────── */
+.ios-large-title  { font-size: 34px; font-weight: 700; letter-spacing: 0.37px; }
+.ios-title-1      { font-size: 28px; font-weight: 700; }
+.ios-headline     { font-size: 17px; font-weight: 600; letter-spacing: -0.41px; }
+.ios-body         { font-size: 17px; font-weight: 400; letter-spacing: -0.41px; }
+.ios-subheadline  { font-size: 15px; font-weight: 400; }
+.ios-footnote     { font-size: 13px; font-weight: 400; }
+.ios-caption-1    { font-size: 12px; font-weight: 400; }
